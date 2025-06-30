@@ -65,7 +65,7 @@ Ensure you have the following installed and configured on your local machine:
 
 * **Google Cloud Platform (GCP) Account:** With billing enabled (First Time you can use free credits). This guide is bases in a new account 
 * **Google Cloud SDK (gcloud CLI):**
-* ** Intallation process:
+* **Intallation process**:
 
     ```bash
     * sudo apt-get update
@@ -83,7 +83,7 @@ Ensure you have the following installed and configured on your local machine:
      * ![image](https://github.com/user-attachments/assets/e4c91e33-dd3b-4132-a42e-0d7f9b804b0d)
      * ![image](https://github.com/user-attachments/assets/46f54a92-f98d-4c71-862c-e8f9d484f8ac)
  
-     * Install google services to interact with GKE
+     * Enable google services to interact with GKE
        gcloud services enable container.googleapis.com compute.googleapis.com
 
        ![image](https://github.com/user-attachments/assets/27fd85be-be4b-491d-a772-7735668f7854)
@@ -93,7 +93,7 @@ Ensure you have the following installed and configured on your local machine:
    ![image](https://github.com/user-attachments/assets/54f2dff5-62f3-466d-a47b-1fc8363e7ed5)
       
 
-* **Neccessary Tools     
+* **Neccessary Tools**
 * **kubectl:** The Kubernetes command-line tool. << Interconnection between cli and GKE to create and admin deployments
     * [kubectl Installation Guide](https://kubernetes.io/docs/tasks/tools/install-kubectl/) (often included with gcloud SDK)
 * **Helm (v3+):** The Kubernetes package manager.
@@ -101,7 +101,7 @@ Ensure you have the following installed and configured on your local machine:
 * **Git:** For cloning this repository.(Optional) <<<< This help us to copy the repository in our local machine in case is necessary to edit some files
     * [Git Installation Guide](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
-* Commands to verify Prerequisites
+* **Commands to verify Prerequisites**
 ```bash
   * gcloud version
   * gcloud projects list
@@ -109,7 +109,7 @@ Ensure you have the following installed and configured on your local machine:
   * helm version
 ```
 
-Expected result:
+* **Expected result:**
 
 ![image](https://github.com/user-attachments/assets/575c7f6a-5e9e-407e-b86b-73e83ce81fda)
 
@@ -138,15 +138,19 @@ Follow these steps to deploy the Guestbook application and the monitoring stack 
 
 ### 4.1. GCP Project Setup
 
-1.  **Enable Required APIs:**
+1.  **Verify if Required APIs are enable:**
     ```bash
-    gcloud services enable container.googleapis.com compute.googleapis.com
+    gcloud services list | grep container
+    gcloud services list | grep compute
     ```
-    * **Note:** Ensure your GCP account has the necessary IAM permissions (e.g., `Service Usage Admin` or `Owner`) in your project to enable APIs.
+* **Expected result:**
+
+![image](https://github.com/user-attachments/assets/2233eb10-764a-42eb-8ebd-d4b305d510aa)
+
 
 ### 4.2. GKE Cluster Creation
 
-To optimize costs, we'll create a small cluster suitable for testing.
+To optimize costs as the current account is using free credits, we'll create a small cluster suitable for testing.
 
 1.  **Create the GKE Cluster:**
     ```bash
@@ -157,39 +161,92 @@ To optimize costs, we'll create a small cluster suitable for testing.
       --machine-type e2-small \ # Economical machine type
       --disk-size 20GB       # Node boot disk size. Adjust if you hit quota issues.
     ```
+* **Expected result:**
+
+    ```bash
+    Command used:
+    gcloud container clusters create guestbook-cluster --region us-central1 --num-nodes 1 --machine-type e2-small --disk-size 20GB --project august-eye-464222-q4
+    ```
+![image](https://github.com/user-attachments/assets/86ce1b19-8dc8-458b-97a5-8f264e254f8d)
+
 
 2.  **Configure `kubectl` to access your cluster:**
     ```bash
-    gcloud container clusters get-credentials guestbook-cluster --region us-central1 --project YOUR_PROJECT_ID
+    gcloud container clusters get-credentials guestbook-cluster --region us-central1 --project august-eye-464222-q4
     ```
-    * **Important:** If you receive a critical message about `gke-gcloud-auth-plugin` not being found or executable, you might need to install it manually. See the [References](#9-references--useful-resources) section for the official installation guide.
+* **Expected result:**
 
+
+
+    
 3.  **Verify cluster nodes:**
     ```bash
     kubectl get nodes
     ```
+* **Expected result:**
 
 ### 4.3. Guestbook Application Deployment
 
-First, ensure you have the Guestbook YAML files locally. If you're building this repo by copying files directly to GitHub, you'll just be committing these from your local copy.
+First, ensure you have the Guestbook YAML files locally. For this deployment previously we need to copy the repotory files from https://github.com/kubernetes/examples.git or create the files YAML locally and edit using command **vim** or **nano**. In this case we already download the files and edit if its necessary.
 
 1.  **Deploy Redis Master:**
     ```bash
     kubectl apply -f guestbook/redis-master-deployment.yaml
     kubectl apply -f guestbook/redis-master-service.yaml
     ```
+    
+* **Expected result:**
+
 2.  **Deploy Redis Slaves:**
     * **Optimization Tip:** For free tier usage, consider editing `guestbook/redis-slave-deployment.yaml` to set `replicas: 1` if it's not already.
     ```bash
     kubectl apply -f guestbook/redis-slave-deployment.yaml
     kubectl apply -f guestbook/redis-slave-service.yaml
     ```
+    
+* **Expected result:**
+
+
 3.  **Deploy Frontend (PHP Guestbook):**
-    * **Optimization Tip:** Edit `guestbook/frontend-deployment.yaml` to set `replicas: 1`.
-    * **Crucial:** Ensure `guestbook/frontend-service.yaml` has `type: LoadBalancer` to expose the application to the internet. **You'll need to manually edit this file in GitHub's interface or after cloning locally.**
+   The Frontend application help us to iniciate the web app using PHP, the interface we will obtain from one of the samples for GKE
+
+     * **Optimization Tip:** Edit `guestbook/frontend-deployment.yaml` to set `replicas: 1`.
+ 
+    ```yaml
+apiVersion: apps/v1 #  for k8s versions before 1.9.0 use apps/v1beta2  and before 1.8.0 use extensions/v1beta1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: guestbook
+      tier: frontend
+  replicas: 1 #<<<<< 
+  template:
+    metadata:
+      labels:
+        app: guestbook
+        tier: frontend
+    spec:
+      containers:
+      - name: php-redis
+        image: gcr.io/google-samples/gb-frontend:v5
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        env:
+        - name: GET_HOSTS_FROM
+          value: dns
+        ports:
+        - containerPort: 80
+``` 
+      
+    * **Crucial:** Ensure `guestbook/frontend-service.yaml` has `type: LoadBalancer` to expose the application to the internet. 
 
     ```yaml
-    # Excerpt from guestbook/frontend-service.yaml
+    # frontend-service.yaml
     apiVersion: v1
     kind: Service
     metadata:
