@@ -41,6 +41,7 @@ This repository provides a step-by-step guide to deploying the classic "Guestboo
 
 This diagram illustrates the high-level interaction between the components deployed in your GKE cluster:
 
+```bash
 [User]
 |
 V
@@ -56,6 +57,7 @@ V
 |
 V
 [Grafana Pod] <--queries data from-- [Prometheus Pods]
+ ```
 
 ## 2. 🛠️ Prerequisites
 
