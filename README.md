@@ -226,28 +226,28 @@ kubectl get svc
    The Frontend application help us to iniciate the web app using PHP, the interface we will obtain from one of the samples for GKE
 
      * **Optimization Tip:** Edit guestbook/frontend-deployment.yaml to set replicas: 1.
- 
+
     ```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: frontend
-spec:
-  selector:
-    matchLabels:
-      app: guestbook
-      tier: frontend
-  replicas: 1 #<<<<< 
-  template:
-    metadata:
+    apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: frontend
+      spec:
+      selector:
+      matchLabels:
+         app: guestbook
+         tier: frontend
+         replicas: 1 #<<<<< 
+      template:
+         metadata:
       labels:
         app: guestbook
         tier: frontend
-    spec:
-      containers:
-      - name: php-redis
-        image: gcr.io/google-samples/gb-frontend:v5
-        resources:
+      spec:
+         containers:
+         - name: php-redis
+         image: gcr.io/google-samples/gb-frontend:v5
+      resources:
           requests:
             cpu: 100m
             memory: 100Mi
@@ -256,7 +256,7 @@ spec:
           value: dns
         ports:
         - containerPort: 80
-    ``` 
+    ```
      
     * **Crucial:** Ensure guestbook/frontend-service.yaml has **type: LoadBalancer** to expose the application to the internet. 
 
