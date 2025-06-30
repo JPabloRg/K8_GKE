@@ -65,13 +65,15 @@ Ensure you have the following installed and configured on your local machine:
 
 * **Google Cloud Platform (GCP) Account:** With billing enabled (First Time you can use free credits). This guide is bases in a new account 
 * **Google Cloud SDK (gcloud CLI):**
-    * [gcloud CLI Installation Guide](https://cloud.google.com/sdk/docs/install)
 * ** Intallation process:
+
+    ```bash
     * sudo apt-get update
     * sudo apt-get install apt-transport-https ca-certificates gnupg curl : install http certifiicate transport and curl
     * curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg : Import the Public Key
     * sudo apt-get update && sudo apt-get install google-cloud-cli : Install cli package
     * gcloud init : start GCLOUD
+    ```
 
     * Authenticate your CLI:
         ```bash
@@ -117,6 +119,7 @@ Expected result:
 
 This section outlines the key files and directories within this repository. 
 
+```bash
 ├── guestbook/
 │   ├── frontend-deployment.yaml
 │   ├── frontend-service.yaml
@@ -127,6 +130,7 @@ This section outlines the key files and directories within this repository.
 ├── monitoring/
 │   └── prometheus-grafana-values.yaml << This two services help us with monitoring metrics and display information in a web to create and edit dashboards
 └── README.md
+```
 
 ## 4. 🚀 Deployment Guide
 
