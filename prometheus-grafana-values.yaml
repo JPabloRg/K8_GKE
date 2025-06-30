@@ -1,0 +1,38 @@
+alertmanager:
+  enabled: false 
+kube-state-metrics:
+  resources:
+   limits:
+   cpu: 100m
+   memory: 128Mi
+   requests:
+   cpu: 50m
+   memory: 64Mi
+
+grafana:
+  enabled: true # Asegúrate de que Grafana esté habilitado
+  adminPassword: "admin12#$" 
+  # Get password: kubectl get secret --namespace monitoring prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode
+
+    service:
+    type: LoadBalancer
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+prometheus:
+  prometheusSpec:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    retention: 2d
+    ruleSelectorNilUsesMode: false # Required for Prometheus < 2.27
+    ruleSelector: {}
