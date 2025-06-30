@@ -86,7 +86,8 @@ Ensure you have the following installed and configured on your local machine:
 
 * **Note:** Ensure your GCP account has the necessary IAM permissions in your project to enable APIs
 
-      ![image](https://github.com/user-attachments/assets/e0202d16-9847-476d-b1b3-db464ef59c7e)
+   ![image](https://github.com/user-attachments/assets/54f2dff5-62f3-466d-a47b-1fc8363e7ed5)
+      
 
 * **Neccessary Tools     
 * **kubectl:** The Kubernetes command-line tool. << Interconnection between cli and GKE to create and admin deployments
