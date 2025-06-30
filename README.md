@@ -72,6 +72,7 @@ Ensure you have the following installed and configured on your local machine:
     * gcloud init : start GCLOUD
 
     * Authenticate your CLI:
+        ```bash
         gcloud auth login
         gcloud config set project YOUR_PROJECT_ID # Replace YOUR_PROJECT_ID
         ```
@@ -80,7 +81,9 @@ Ensure you have the following installed and configured on your local machine:
  
      * Install google services to interact with GKE
        gcloud services enable container.googleapis.com compute.googleapis.com
+
        ![image](https://github.com/user-attachments/assets/27fd85be-be4b-491d-a772-7735668f7854)
+
 * **Note:** Ensure your GCP account has the necessary IAM permissions in your project to enable APIs
 
       ![image](https://github.com/user-attachments/assets/e0202d16-9847-476d-b1b3-db464ef59c7e)
@@ -93,13 +96,16 @@ Ensure you have the following installed and configured on your local machine:
 * **Git:** For cloning this repository.(Optional) <<<< This help us to copy the repository in our local machine in case is necessary to edit some files
     * [Git Installation Guide](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
-* **Commands to verify Prerequisites
+* Commands to verify Prerequisites
+```bash
   * gcloud version
   * gcloud projects list
   * kubectl version
   * helm version
+```
 
 Expected result:
+
 ![image](https://github.com/user-attachments/assets/575c7f6a-5e9e-407e-b86b-73e83ce81fda)
 
 ---
