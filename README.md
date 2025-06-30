@@ -1,5 +1,6 @@
 # Technical Challenge NG-Voice
 
+Juan Pablo Rodriguez Grande
 ---
 ## 🚀 Project Overview
 
@@ -437,25 +438,41 @@ To prevent continuous charges on your GCP account, **it is essential to delete a
     helm uninstall prometheus -n monitoring
     kubectl delete namespace monitoring # Optional, but recommended to delete the namespace
     ```
+
 * **Expected result:**
 
+![image](https://github.com/user-attachments/assets/35107993-1a73-4d3c-bb30-3b823a169d96)
 
 
 2.  **Delete the Guestbook Application (Kubernetes):**
     ```bash
-    kubectl delete -f guestbook/frontend-service.yaml
-    kubectl delete -f guestbook/frontend-deployment.yaml
-    kubectl delete -f guestbook/redis-slave-service.yaml
-    kubectl delete -f guestbook/redis-slave-deployment.yaml
-    kubectl delete -f guestbook/redis-master-service.yaml
-    kubectl delete -f guestbook/redis-master-deployment.yaml
+    kubectl delete -f frontend-service.yaml
+    kubectl delete -f frontend-deployment.yaml
+    kubectl delete -f redis-slave-service.yaml
+    kubectl delete -f redis-slave-deployment.yaml
+    kubectl delete -f redis-master-service.yaml
+    kubectl delete -f redis-master-deployment.yaml
     ```
+
+* **Expected result:**
+
+![image](https://github.com/user-attachments/assets/588287d9-761a-49c3-9eeb-74ed15c8caed)
+
 
 3.  **Delete the GKE Cluster:**
     ```bash
     gcloud container clusters delete guestbook-cluster --region us-central1 --project YOUR_PROJECT_ID --quiet
     ```
     * **Verify Billing:** After cleanup, check your GCP Billing dashboard to ensure no residual resources are incurring costs.
+
+* **Expected result:**
+
+    ```bash
+    Command used:
+    gcloud container clusters delete guestbook-cluster --region us-central1 --project august-eye-464222-q4 --quiet
+    ```
+
+![image](https://github.com/user-attachments/assets/e5aa0f42-a0e3-4e44-afb3-25813ad4eca3)
 
 ---
 
