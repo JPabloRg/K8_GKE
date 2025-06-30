@@ -18,22 +18,22 @@ This repository provides a step-by-step guide to deploying the classic "Guestboo
 
 ## 📋 Table of Contents
 
-1.  [System Architecture](#1-system-architecture)
-2.  [Prerequisites](#2-prerequisites)
-3.  [Repository Structure](#3-repository-structure)
-4.  [Deployment Guide](#4-deployment-guide)
+1.  [System Architecture]
+2.  [Prerequisites]
+3.  [Repository Structure]
+4.  [Deployment Guide]
     * 4.1. GCP Project Setup
     * 4.2. GKE Cluster Creation
     * 4.3. Guestbook Application Deployment
     * 4.4. Prometheus & Grafana Deployment
-5.  [Accessing the Applications](#5-accessing-the-applications)
+5.  [Accessing the Applications]
     * 5.1. Accessing the Guestbook
     * 5.2. Accessing Grafana
-6.  [Cost Optimization (Free Tier / Development)](#6-cost-optimization-free-tier--development)
-7.  [Resource Cleanup](#7-resource-cleanup)
-8.  [Important Notes & Considerations](#8-important-notes--considerations)
-9.  [References & Useful Resources](#9-references--useful-resources)
-10. [License](#10-license)
+6.  [Cost Optimization (Free Tier / Development)]
+7.  [Resource Cleanup]
+8.  [Important Notes & Considerations]
+9.  [References & Useful Resources]
+10. [License]
 
 ---
 
@@ -167,7 +167,7 @@ To optimize costs as the current account is using free credits, we'll create a s
     Command used:
     gcloud container clusters create guestbook-cluster --region us-central1 --num-nodes 1 --machine-type e2-small --disk-size 20GB --project august-eye-464222-q4
     ```
-![image](https://github.com/user-attachments/assets/86ce1b19-8dc8-458b-97a5-8f264e254f8d)
+![image](https://github.com/user-attachments/assets/28afa165-682e-4592-adb9-d0bf7034166f)
 
 
 2.  **Configure `kubectl` to access your cluster:**
@@ -176,14 +176,15 @@ To optimize costs as the current account is using free credits, we'll create a s
     ```
 * **Expected result:**
 
+![image](https://github.com/user-attachments/assets/bf20b48a-d663-4220-ac36-0f67858d5a27)
 
-
-    
 3.  **Verify cluster nodes:**
     ```bash
     kubectl get nodes
     ```
 * **Expected result:**
+
+![image](https://github.com/user-attachments/assets/74b4fbf2-18e1-4c4a-aa1e-4c44f8fdf0c5)
 
 ### 4.3. Guestbook Application Deployment
 
@@ -194,8 +195,15 @@ First, ensure you have the Guestbook YAML files locally. For this deployment pre
     kubectl apply -f guestbook/redis-master-deployment.yaml
     kubectl apply -f guestbook/redis-master-service.yaml
     ```
-    
 * **Expected result:**
+
+```bash
+Verify the result pods deployed:
+kubectl get pods
+kubectl get svc
+```
+![image](https://github.com/user-attachments/assets/2efd8db9-053a-4b55-b16d-51452f17bded)
+
 
 2.  **Deploy Redis Slaves:**
     * **Optimization Tip:** For free tier usage, consider editing `guestbook/redis-slave-deployment.yaml` to set `replicas: 1` if it's not already.
@@ -205,6 +213,13 @@ First, ensure you have the Guestbook YAML files locally. For this deployment pre
     ```
     
 * **Expected result:**
+
+```bash
+Verify the result pods deployed:
+kubectl get pods
+kubectl get svc
+```
+![image](https://github.com/user-attachments/assets/97049a85-df9b-4732-a812-7c611052b25f)
 
 
 3.  **Deploy Frontend (PHP Guestbook):**
@@ -241,8 +256,8 @@ spec:
           value: dns
         ports:
         - containerPort: 80
-``` 
-      
+    ``` 
+     
     * **Crucial:** Ensure `guestbook/frontend-service.yaml` has `type: LoadBalancer` to expose the application to the internet. 
 
     ```yaml
@@ -268,6 +283,16 @@ spec:
     kubectl apply -f guestbook/frontend-deployment.yaml
     kubectl apply -f guestbook/frontend-service.yaml
     ```
+* **Expected result:**
+
+```bash
+Verify the result pods deployed:
+kubectl get pods
+kubectl get svc
+```
+![image](https://github.com/user-attachments/assets/8b6123fa-ad27-47f2-94eb-45f83c768cdd)
+
+
 
 ### 4.4. Prometheus & Grafana Deployment
 
