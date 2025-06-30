@@ -18,22 +18,23 @@ This repository provides a step-by-step guide to deploying the classic "Guestboo
 
 ## 📋 Table of Contents
 
-1.  [System Architecture]
-2.  [Prerequisites]
-3.  [Repository Structure]
-4.  [Deployment Guide]
+1.  System Architecture
+2.  Prerequisites
+3.  Repository Structure
+4.  Deployment Guide
     * 4.1. GCP Project Setup
     * 4.2. GKE Cluster Creation
     * 4.3. Guestbook Application Deployment
     * 4.4. Prometheus & Grafana Deployment
-5.  [Accessing the Applications]
+5.  Accessing the Applications
     * 5.1. Accessing the Guestbook
     * 5.2. Accessing Grafana
-6.  [Cost Optimization (Free Tier / Development)]
-7.  [Resource Cleanup]
-8.  [Important Notes & Considerations]
-9.  [References & Useful Resources]
-10. [License]
+6.  Cost Optimization (Free Tier / Development)
+7.  Resource Cleanup
+8.  Important Notes & Considerations
+9.  References & Useful Resources
+10. Troubleshooting Commands
+
 
 ---
 
@@ -298,24 +299,39 @@ kubectl get svc
 
 1.  **Add the Helm Repository:**
     ```bash
-    helm repo add prometheus-community [https://prometheus-community.github.io/helm-charts](https://prometheus-community.github.io/helm-charts)
+    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
     helm repo update
     ```
+* **Expected result:**
+
+```bash
+Verify the repositories are added correctly:
+helm repo list
+```
+
+![image](https://github.com/user-attachments/assets/e40e6312-ed8a-46f7-ab8f-41be366c5563)
+
+
 2.  **Create a Dedicated Namespace:**
     ```bash
     kubectl create namespace monitoring
     ```
+* **Expected result:**
+  
+![image](https://github.com/user-attachments/assets/2557ee8e-12b0-44b0-ac63-c5b9a1ff9dbb)
+
+
 3.  **Prepare the `monitoring/prometheus-grafana-values.yaml` file:**
     Open the `monitoring/prometheus-grafana-values.yaml` file. This file contains configurations to optimize resource consumption (e.g., disabling Alertmanager, adjusting CPU/Memory requests/limits).
     * **CHANGE THE GRAFANA ADMIN PASSWORD!**
         Find `adminPassword: "yourStrongPassword"` and set a **strong, unique password**.
-    * **Grafana Service Type:** By default, it's set to `type: LoadBalancer` for easy external access. If you prefer `NodePort` for cost savings, adjust it here.
+    * **Grafana Service Type:** By default, it's set to `type: LoadBalancer` for easy external access.
 
     ```yaml
     # Excerpt from monitoring/prometheus-grafana-values.yaml
     grafana:
       enabled: true
-      adminPassword: "yourStrongPassword" # <--- CHANGE THIS!
+      adminPassword: "admin12#$" # <--- CHANGE THIS!
       service:
         type: LoadBalancer # Or NodePort
     # ... other configurations for Prometheus resource limits, etc.
@@ -327,12 +343,26 @@ kubectl get svc
       --namespace monitoring \
       -f monitoring/prometheus-grafana-values.yaml
     ```
+* **Expected result:**
+
+```bash
+Command used:
+helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring -f prometheus-grafana-values.yaml
+```
+
+![image](https://github.com/user-attachments/assets/88795a7e-e353-46db-91d0-ef08d811ab89)
+
 
 5.  **Verify monitoring deployment:**
     ```bash
     kubectl get pods -n monitoring
     kubectl get services -n monitoring
     ```
+* **Expected result:**
+
+![image](https://github.com/user-attachments/assets/48bf11af-5ae3-4945-9658-9a821902a9d6)
+
+![image](https://github.com/user-attachments/assets/2604f12f-6e6a-41e5-82c8-3b212064ec7a)
 
 ---
 
@@ -346,8 +376,17 @@ kubectl get svc
     ```
     Wait until the `EXTERNAL-IP` column shows a public IP address (this might take a few minutes).
 
+* **Expected result:**
+
+![image](https://github.com/user-attachments/assets/04be5f3d-bb1a-4514-a311-399c6268c752)
+
 2.  **Open in Browser:**
     Navigate to `http://<GUESTBOOK_EXTERNAL_IP>` in your web browser.
+
+* **Expected result:**
+
+![image](https://github.com/user-attachments/assets/02cde154-73f7-405b-ac15-72540dde2759)
+
 
 ### 5.2. Accessing Grafana
 
@@ -357,6 +396,10 @@ kubectl get svc
     ```
     Wait until the `EXTERNAL-IP` column shows a public IP address.
 
+* **Expected result:**
+
+![image](https://github.com/user-attachments/assets/a6452cdb-f400-4832-b60a-1c2574030da7)
+
 2.  **Get Grafana Admin Password:**
     The username is `admin`. The password is what you set in `monitoring/prometheus-grafana-values.yaml`. If you need to retrieve it later:
     ```bash
@@ -365,5 +408,82 @@ kubectl get svc
 
 3.  **Open in Browser:**
     Navigate to `http://<GRAFANA_EXTERNAL_IP>` in your web browser and log in with the credentials.
+
+* **Expected result:**
+
+![image](https://github.com/user-attachments/assets/5a48a6d2-50b6-4d0b-8e31-8308237e4133)
+
+---
+
+
+## 6. 💸 Cost Optimization (Free Tier / Development)
+
+This project is configured to minimize costs for a testing environment, but GKE clusters and Load Balancers do incur charges.
+
+* **Small Nodes:** We use `e2-small` and a single node.
+* **Minimum Replicas:** Guestbook deployments are configured for a single replica.
+* **Prometheus/Grafana Configuration:** The `prometheus-grafana-values.yaml` file disables non-essential components (Alertmanager) and adjusts resource limits.
+* **No Data Persistence:** By default, Prometheus data is not persisted to permanent disks, saving storage costs. If you need persistence, you'll need to configure `storageSpec` in `prometheus-grafana-values.yaml`.
+* **ALWAYS CLEAN UP!** This is the most crucial step to avoid unexpected charges.
+
+---
+
+## 7. 🧹 Resource Cleanup
+
+To prevent continuous charges on your GCP account, **it is essential to delete all created resources** once you've finished experimenting.
+
+1.  **Uninstall Prometheus & Grafana (Helm):**
+    ```bash
+    helm uninstall prometheus -n monitoring
+    kubectl delete namespace monitoring # Optional, but recommended to delete the namespace
+    ```
+* **Expected result:**
+
+
+
+2.  **Delete the Guestbook Application (Kubernetes):**
+    ```bash
+    kubectl delete -f guestbook/frontend-service.yaml
+    kubectl delete -f guestbook/frontend-deployment.yaml
+    kubectl delete -f guestbook/redis-slave-service.yaml
+    kubectl delete -f guestbook/redis-slave-deployment.yaml
+    kubectl delete -f guestbook/redis-master-service.yaml
+    kubectl delete -f guestbook/redis-master-deployment.yaml
+    ```
+
+3.  **Delete the GKE Cluster:**
+    ```bash
+    gcloud container clusters delete guestbook-cluster --region us-central1 --project YOUR_PROJECT_ID --quiet
+    ```
+    * **Verify Billing:** After cleanup, check your GCP Billing dashboard to ensure no residual resources are incurring costs.
+
+---
+
+## 8. ⚠️ Important Notes & Considerations
+
+* **Grafana Security:** The Grafana admin password is set directly in the `values.yaml` file. For a production environment, never store passwords in plain text in repositories; consider more secure secret management methods (e.g., Google Secret Manager, HashiCorp Vault, encrypted Kubernetes Secrets).
+* **Scalability:** This setup is optimized for testing. For a production environment, would be neecessary more nodes, replicas, data persistence, and a more robust resource configuration for Prometheus and Grafana.
+
+---
+
+## 9. 🔗 References & Useful Resources
+
+* [Official Google Kubernetes Engine (GKE) Documentation](https://cloud.google.com/kubernetes-engine/docs)
+* [Kubernetes Examples - Guestbook Application](https://github.com/kubernetes/examples/tree/master/guestbook)
+* [Official Prometheus Documentation](https://prometheus.io/docs/)
+* [Official Grafana Documentation](https://grafana.com/docs/)
+* [Prometheus Community Helm Charts - kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
+* [gke-gcloud-auth-plugin Installation Guide](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl#install_plugin) (if needed)
+* [GCP Quota Monitoring](https://console.cloud.google.com/iam-admin/quotas)
+* [GKE Pricing](https://cloud.google.com/kubernetes-engine/pricing)
+
+---
+
+## 10. ⚠️ Troubleshooting Commands
+
+In Kubeclt there are some commands that help us to idetify some failures or debug information about our cluster and deployments also help us to identify or describe additional information about our app/deployment/cluster here are some commands:
+
+- Check memory and CPU usage -- kubectl top pod
+- Decribe pod -- kubectl describe pod <NAME>
 
 ---
