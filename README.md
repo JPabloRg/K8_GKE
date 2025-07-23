@@ -4,10 +4,11 @@ Juan Pablo Rodriguez Grande
 ---
 ## 🚀 Project Overview
 
-This repository provides a step-by-step guide to deploying the classic "Guestbook" application on **Google Kubernetes Engine (GKE)**, complete with a comprehensive monitoring stack using **Prometheus** and **Grafana**. This setup demonstrates a multi-tier web application deployment and its observability in a cloud environment.
+This repository provides a step-by-step guide to deploying the classic "Guestbook" application on **Google Kubernetes Engine (GKE)** and **Amazon Elastic Kubernetes Service (EKS)**, complete with a comprehensive monitoring stack using **Prometheus** and **Grafana**. This setup demonstrates a multi-tier web application deployment and its observability in a cloud environment.
 
 **Key Components:**
 * **Google Kubernetes Engine (GKE):** Google Cloud's managed Kubernetes service.
+* **Amazon Elastic Kubernetes Service (EKS):** Amazon Web Services (AWS)  managed Kubernetes service
 * **Guestbook Application:**
     * **Redis Master:** Stores Guestbook entries.
     * **Redis Slaves:** Replicas for read operations.
@@ -47,10 +48,10 @@ This diagram illustrates the high-level interaction between the components deplo
 [User]
 |
 V
-[Google Cloud Load Balancer]
+[Google/AWS Cloud Load Balancer]
 |
 V
-[GKE Frontend Pods (PHP)] ---read---> [Redis Slaves Pods]
+[GKE/EKS Frontend Pods (PHP)] ---read---> [Redis Slaves Pods]
 |                                      ^
 |                                      |
 ----write-----------------------------> [Redis Master Pod]
@@ -93,6 +94,29 @@ Ensure you have the following installed and configured on your local machine:
 * **Note:** Ensure your GCP account has the necessary IAM permissions in your project to enable APIs
 
    ![image](https://github.com/user-attachments/assets/54f2dff5-62f3-466d-a47b-1fc8363e7ed5)
+
+* **Amazon Web Services (AWS) Account**: With billing enabled (Be careful to keep enabled the resorces). This guide is bases in a new account 
+* **Set up AWS CLI:**
+* **Intallation process**:
+
+    ```bash
+    * sudo apt-get update
+    * curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.33.0/2025-05-01/bin/linux/amd64/kubectl
+    * chmod +x ./kubectl
+    * mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
+    * echo 'export PATH=$HOME/bin:$PATH' >> ~/.bashrc
+
+    * eksctl installation
+    * curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+    * sudo mv /tmp/eksctl /usr/local/bin
+    * eksctl version
+    ```
+
+    * Authenticate your CLI:
+        ```bash
+        
+        gcloud config set project YOUR_PROJECT_ID # Replace YOUR_PROJECT_ID
+        ```
       
 
 * **Neccessary Tools**
