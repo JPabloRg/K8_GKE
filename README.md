@@ -114,8 +114,19 @@ Ensure you have the following installed and configured on your local machine:
 
     * Authenticate your CLI:
         ```bash
-        
-        gcloud config set project YOUR_PROJECT_ID # Replace YOUR_PROJECT_ID
+        aws configure
+        Access Key ID [None]: AKIAIOSFODNN7EXAMPLE
+        Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+        Default region name [None]: region-code
+        Default output format [None]: json
+
+        Verification:
+        [ec2-user@ip-172-31-81-188 ~]$ aws sts get-caller-identity
+        {
+            "UserId": "AIDAV5YEEXNL56OWKYYK21",
+            "Account": "407493720910",
+            "Arn": "arn:aws:iam::407493720910:user/admin"
+        }
         ```
       
 
@@ -131,6 +142,7 @@ Ensure you have the following installed and configured on your local machine:
 ```bash
   * gcloud version
   * gcloud projects list
+  * aws --version
   * kubectl version
   * helm version
 ```
@@ -138,6 +150,9 @@ Ensure you have the following installed and configured on your local machine:
 * **Expected result:**
 
 ![image](https://github.com/user-attachments/assets/575c7f6a-5e9e-407e-b86b-73e83ce81fda)
+
+
+<img width="984" height="111" alt="image" src="https://github.com/user-attachments/assets/02d2613b-a8d3-404c-aa82-37e23892e83f" />
 
 ---
 
