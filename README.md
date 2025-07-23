@@ -25,7 +25,7 @@ This repository provides a step-by-step guide to deploying the classic "Guestboo
 3.  Repository Structure
 4.  Deployment Guide
     * 4.1. GCP Project Setup
-    * 4.2. GKE Cluster Creation
+    * 4.2. GKE/EKS Cluster Creation
     * 4.3. Guestbook Application Deployment
     * 4.4. Prometheus & Grafana Deployment
 5.  Accessing the Applications
@@ -189,7 +189,7 @@ Follow these steps to deploy the Guestbook application and the monitoring stack 
 ![image](https://github.com/user-attachments/assets/2233eb10-764a-42eb-8ebd-d4b305d510aa)
 
 
-### 4.2. GKE Cluster Creation
+### 4.2. GKE/EKS Cluster Creation
 
 To optimize costs as the current account is using free credits, we'll create a small cluster suitable for testing.
 
@@ -202,6 +202,19 @@ To optimize costs as the current account is using free credits, we'll create a s
       --machine-type e2-small \ # Economical machine type
       --disk-size 20GB       # Node boot disk size. Adjust if you hit quota issues.
     ```
+    **Create the EKS Cluster:**
+
+   ```bash
+    eksctl create --name guestbook-cluster \
+      --region us-east-1 \
+      --nodegroup-name linux-nodes \
+      --node-type t3.medium \
+      --nodes 2 \
+      --nodes-min 1 \
+      --nodes-max 3 \
+      --managed
+   ```
+   
 * **Expected result:**
 
     ```bash
@@ -210,8 +223,14 @@ To optimize costs as the current account is using free credits, we'll create a s
     ```
 ![image](https://github.com/user-attachments/assets/28afa165-682e-4592-adb9-d0bf7034166f)
 
+* **Expected result:**
 
-2.  **Configure `kubectl` to access your cluster:**
+    ```bash
+    Command used:
+    eksctl create cluster --name guestbook-aws --region us-east-1 --nodegroup-name linux-nodes --node-type t3.medium --nodes 2 --nodes-min 1 --nodes-max 3 --managed
+    ```
+
+2.  **Configure `kubectl` to access your cluster:** (This apply for GCP)
     ```bash
     gcloud container clusters get-credentials guestbook-cluster --region us-central1 --project august-eye-464222-q4
     ```
