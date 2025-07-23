@@ -560,5 +560,9 @@ In Kubeclt there are some commands that help us to idetify some failures or debu
 
 - Check memory and CPU usage -- kubectl top pod
 - Decribe pod -- kubectl describe pod <NAME>
-
+- kubectl logs <pod-name>
+- kubectl get nodes -o wide
+- kubectl debug <pod-name>
+- kubectl get node <my node> -o yaml
+- kubectl debug node/mynode -it --image=ubuntu (Valid in ubuntu)
 ---
